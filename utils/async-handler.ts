@@ -6,13 +6,17 @@
 import { NextResponse } from "next/server";
 import { AppError } from "./app-error";
 
+type RouteHandler = (
+  req: Request,
+  context?: { params?: Record<string, string> }
+) => Promise<Response>;
+
 export const asyncHandler =
-  (handler: Function) =>
-  async (req: Request, context?: any) => {
+  (handler: RouteHandler) =>
+  async (req: Request, context?: { params?: Record<string, string> }) => {
     try {
       return await handler(req, context);
-    } catch (error: any) {
-
+    } catch (error: unknown) {
       // Known AppError
       if (error instanceof AppError) {
         return NextResponse.json(
