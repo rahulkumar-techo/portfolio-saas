@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+:root {
+  --dashboard-bg: linear-gradient(155deg, #f8fafc 0%, #eef2ff 55%, #f0fdf4 100%);
+}
 
 /* Premium Green SaaS Background */
 
@@ -35,4 +38,36 @@
   background: rgba(74, 222, 128, 0.2); /* green */
   filter: blur(120px);
   z-index: -1;
+}
+
+.input {
+  @apply w-full rounded-lg border border-slate-300 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100;
+}
+
+.btn-secondary {
+  @apply rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200;
+}
+
+.dashboard-shell {
+  @apply flex h-screen overflow-hidden;
+  background: var(--dashboard-bg);
+}
+
+.editor-card {
+  @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-6;
+}
+
+.section-title {
+  @apply mb-4 text-lg font-semibold text-slate-900;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
