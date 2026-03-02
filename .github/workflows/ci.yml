@@ -12,15 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 1️⃣ Setup Node (without cache)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "pnpm"
 
+      # 2️⃣ Enable Corepack (this installs pnpm from package.json)
       - name: Enable Corepack
         run: corepack enable
 
+      # 3️⃣ Now install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
