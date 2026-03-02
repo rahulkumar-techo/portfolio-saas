@@ -142,6 +142,34 @@ const MINI_COLORS: Record<TileType, string> = {
 const clamp = (v: number, mn: number, mx: number): number => Math.max(mn, Math.min(mx, v));
 const tileDist = (ax: number, ay: number, bx: number, by: number): number =>
   Math.sqrt((ax - bx) ** 2 + (ay - by) ** 2);
+const seeded01 = (i: number, seed: number): number => {
+  const x = Math.sin(i * 12.9898 + seed * 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+function roundRectPath(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number
+): void {
+  if (typeof ctx.roundRect === "function") {
+    ctx.roundRect(x, y, w, h, r);
+    return;
+  }
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.moveTo(x + rr, y);
+  ctx.lineTo(x + w - rr, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+  ctx.lineTo(x + w, y + h - rr);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+  ctx.lineTo(x + rr, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+  ctx.lineTo(x, y + rr);
+  ctx.quadraticCurveTo(x, y, x + rr, y);
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // REDUCER
@@ -170,7 +198,7 @@ function statsReducer(s: Stats, a: GameAction): Stats {
 
 /** Returns true if window width <= 640 */
 function useIsMobile(): boolean {
-  const [mob, setMob] = useState(() => window.innerWidth <= 640);
+  const [mob, setMob] = useState(() => (typeof window !== "undefined" ? window.innerWidth <= 640 : false));
   useEffect(() => {
     const fn = () => setMob(window.innerWidth <= 640);
     window.addEventListener("resize", fn);
@@ -530,7 +558,7 @@ const StudentJourneyGame: React.FC = () => {
         c.font="bold 8px monospace";
         const tw=c.measureText(npc.name).width;
         c.fillStyle="rgba(5,5,18,0.9)";
-        c.beginPath(); (c as any).roundRect?.(sx-tw/2-6,sy-TILE/2+bounce-22,tw+12,17,4); c.fill();
+        c.beginPath(); roundRectPath(c, sx - tw / 2 - 6, sy - TILE / 2 + bounce - 22, tw + 12, 17, 4); c.fill();
         c.fillStyle=npc.color; c.fillText(npc.name,sx,sy-TILE/2+bounce-14);
         c.font="bold 13px sans-serif"; c.fillStyle="#fbbf24";
         c.fillText("!",sx,sy-TILE/2+bounce-33+Math.sin(now*3)*2);
@@ -582,7 +610,7 @@ const StudentJourneyGame: React.FC = () => {
       const mw=COLS*sc, mh=ROWS*sc;
       const mx=canvas.width-mw-12, my=canvas.height-mh-12;
       c.fillStyle="rgba(3,3,14,0.88)"; c.strokeStyle="rgba(255,255,255,0.1)"; c.lineWidth=1;
-      c.beginPath(); (c as any).roundRect?.(mx-5,my-20,mw+10,mh+25,7); c.fill(); c.stroke();
+      c.beginPath(); roundRectPath(c, mx - 5, my - 20, mw + 10, mh + 25, 7); c.fill(); c.stroke();
       c.font="bold 6px monospace"; c.fillStyle="rgba(255,255,255,0.3)"; c.textAlign="center";
       c.fillText("MAP",mx+mw/2,my-7);
       RAW_MAP.forEach((row,ry)=>row.forEach((tile,rx)=>{
@@ -693,7 +721,19 @@ const StudentJourneyGame: React.FC = () => {
       <style>{css}</style>
       <div style={{ width:"100vw", height:"100vh", background:"#050510", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", fontFamily:"'Press Start 2P',monospace", position:"relative", overflow:"hidden", padding:16, touchAction:"none" }}>
         {Array.from({length:60},(_,i)=>(
-          <div key={i} style={{ position:"absolute", width:i%5===0?3:2, height:i%5===0?3:2, background:"white", borderRadius:"50%", left:`${Math.random()*100}%`, top:`${Math.random()*100}%`, animation:`starPop ${2+Math.random()*3}s ${Math.random()*3}s infinite` }} />
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              width: i % 5 === 0 ? 3 : 2,
+              height: i % 5 === 0 ? 3 : 2,
+              background: "white",
+              borderRadius: "50%",
+              left: `${seeded01(i, 7) * 100}%`,
+              top: `${seeded01(i, 19) * 100}%`,
+              animation: `starPop ${2 + seeded01(i, 31) * 3}s ${seeded01(i, 47) * 3}s infinite`,
+            }}
+          />
         ))}
         <div style={{ fontSize: isMobile?54:72, animation:"floatUp 3s ease-in-out infinite", marginBottom:14 }}>🧑‍💻</div>
         <div style={{ fontSize:"clamp(5px,1.4vw,9px)", color:"#22ffcc", letterSpacing:"0.2em", marginBottom:8 }}>★ INTERACTIVE GAME ★</div>

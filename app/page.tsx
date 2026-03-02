@@ -1,10 +1,9 @@
-import Hero from '@/components/ui/home/HeroSection';
-import React from 'react';;
-import AppBackground from '@/components/AppBackground';
-import Services from '@/components/ui/home/ServiceSection';
-import Reviews from '@/components/ui/home/Reviews';
-import TechStack from '@/components/ui/home/TechStack';
-import Footer from '@/components/ui/Footer';
+import { Navbar } from '@/components/landing/Navbar'
+import { HeroSection } from '@/components/landing/HeroSection'
+import { FeaturesSection } from '@/components/landing/FeaturesSection'
+import { PricingSection } from '@/components/landing/PricingSection'
+import { Footer } from '@/components/landing/Footer'
+import { Divider } from '@/components/ui/index'
 
 
 type Props = {}
@@ -12,13 +11,13 @@ type Props = {}
 const page = (props: Props) => {
   return (
     <div>
-      <AppBackground>
-        <Hero />
-        <Reviews/>
-        <Services/>
-        <TechStack/>
-        <Footer/>
-      </AppBackground>
+         <Navbar />
+      <HeroSection />
+      <Divider />
+      <FeaturesSection />
+      <Divider />
+      <PricingSection />
+      <Footer />
     </div>
   )
 }

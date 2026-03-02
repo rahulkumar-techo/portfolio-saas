@@ -1,19 +1,11 @@
-import React from 'react'
-import Portfolio from './ThreeDDarkPortfolio';
-import PrismOrbs from './GreenbowPortfolio';
-import GamePortfolio from "./GamePortfolio";
-import StudentJourneyGame from './StudentJourneyGame';
-type Props = {}
+import StudentJourneyGame from '../../components/templates/StudentJourneyGame';
+import { TemplatesClient } from './TemplatesClient';
 
-const page = (props: Props) => {
+export default function Page() {
   return (
     <div>
-        {/* <Portfolio/> */}
-        {/* <PrismOrbs/> */}
-        {/* <GamePortfolio/> */}
-        <StudentJourneyGame/>
+      {/* <StudentJourneyGame /> */}
+      <TemplatesClient/>
     </div>
   )
 }
-
-export default page
