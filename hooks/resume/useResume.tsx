@@ -1,3 +1,5 @@
+import api from '@/lib/axios'
+import { ExperienceRequestBody } from '@/types/server-types/resume'
 import React, { useState } from 'react'
 
 // type Props = {}
@@ -7,6 +9,7 @@ const useResume = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null);
+    const [experience, setExperience] = useState<ExperienceRequestBody | null>(null);
 
 
     const fetchResume = async (section?: string) => {
@@ -34,54 +37,35 @@ const useResume = () => {
         }
     };
 
-
-    // updateResume and other functions can be added here following similar pattern
-
-    const updateResume = async (section: string, updatedData: any) => {
+    const addExperience = async (experienceData: ExperienceRequestBody) => {
         try {
-            setLoading(true)
-            setError(null)
-            setSuccess(null)
-            const res = await fetch("/api/resume", {
-                method: "PATCH",
-                headers: {  
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    section,
-                    data: updatedData,
-                }),
-            })
-            if (!res.ok) {
-                throw new Error("Failed to update resume")
-            }
-            const data = await res.json()
-            setResume((prev:any) => ({
-                ...prev,
-                [section]: data.data.resume[section],
-            }))
-            setSuccess(`${section} updated successfully`)
-        }
-        catch (err: any) {
-            setError(err.message || "Something went wrong")
+            setLoading(true);
+            setError(null);
+            setSuccess(null);
+            const res = await api.post("/resume/experience", experienceData);
+            setSuccess("Experience added successfully");
+            console.log("==========> experience AADD==>", res?.data)
+            setExperience(res?.data?.data)
+            return res?.data?.data ?? null;
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Failed to add experience");
+            return null;
         }
         finally {
-            setLoading(false)
+            setLoading(false);
         }
-    };
+    }
 
-    /**
-     * Auto fetch full resume on mount
-     */
-    React.useEffect(() => {
-        fetchResume()
-    }, [])
+
     return {
         resume,
         loading,
         error,
         success,
-        fetchResume
+        fetchResume,
+        experience,
+        setExperience,
+        addExperience
     }
 }
 

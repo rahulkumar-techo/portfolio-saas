@@ -5,10 +5,11 @@
 
 import mongoose, { Schema, models } from "mongoose";
 
-interface IExperience {
+export interface IExperience {
   userId: mongoose.Types.ObjectId;
   experienceId: string;
-  role: string;
+  jobRole: string;
+  jobType: string;
   company: string;
   period: string;
   description: string;
@@ -30,7 +31,11 @@ const ExperienceSchema = new Schema<IExperience>(
       required: true,
     },
 
-    role: {
+    jobRole: {
+      type: String,
+      required: true,
+    },
+    jobType: {
       type: String,
       required: true,
     },
@@ -65,5 +70,4 @@ const ExperienceSchema = new Schema<IExperience>(
 
 ExperienceSchema.index({ userId: 1, experienceId: 1 }, { unique: true });
 
-export default models.Experience ||
-  mongoose.model("Experience", ExperienceSchema);
+export default models.UserSkills || mongoose.model("experience", ExperienceSchema);

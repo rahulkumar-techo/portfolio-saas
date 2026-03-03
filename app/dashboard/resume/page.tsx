@@ -10,6 +10,7 @@ import ContactSection from '@/components/dashboard/resume/ContactSection'
 import EmptySection from '@/components/dashboard/resume/EmptySection';
 import { useSession } from 'next-auth/react';
 import useContact from '@/hooks/resume/useContact';
+import useResume from '@/hooks/resume/useResume'
 
 export default function ResumePage() {
   const [activeSection, setActiveSection] = useState('experience')
@@ -27,6 +28,7 @@ export default function ResumePage() {
     updateContact,
     setContact, } = useContact();
     console.log("Contact info in ResumePage:", contact, loading, error, success); // Debug log
+    const {loading:resLoading,addExperience}=useResume();
 
     useEffect(() => {
       const fetchData = async () => {
@@ -45,6 +47,11 @@ export default function ResumePage() {
       fetchData();
 
     },[activeSection]);
+
+
+    const handleExperience = ()=>{
+      
+    } 
 
   return (
     <div className="space-y-6 max-w-6xl">

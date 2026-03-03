@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Section, SectionHeader, Badge } from '@/components/ui/index'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { PRICING_PLANS } from '@/lib/data'
 
 export function PricingSection() {

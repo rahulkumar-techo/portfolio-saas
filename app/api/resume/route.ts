@@ -6,7 +6,7 @@
 import resumeService from "@/services/resume.service";
 import { ResponseHandler } from "@/utils/response-handler";
 import { asyncHandler } from "@/utils/async-handler";
-import  getServerSession  from "next-auth"; // adjust if using custom auth
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export const GET = asyncHandler(async (req: Request) => {

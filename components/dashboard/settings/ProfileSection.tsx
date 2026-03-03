@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from '@/components/ui'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { MOCK_USER } from '@/lib/data'
 
 export default function ProfileSection() {

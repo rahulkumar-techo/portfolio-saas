@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from '@/components/ui'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 const RESUME_SECTIONS = [
   { id: 'contact', label: 'Contact Info', icon: '👤' },

@@ -1,7 +1,7 @@
 'use client'
 
 import { MOCK_USER } from '@/lib/data'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 export default function DashboardHeader() {
   return (

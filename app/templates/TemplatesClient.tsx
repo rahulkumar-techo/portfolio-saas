@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Navbar } from '@/components/landing/Navbar'
 import { Footer } from '@/components/landing/Footer'
 import { Section, SectionHeader, Badge } from '@/components/ui/index'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { TEMPLATES, type Template } from '@/lib/data'
 
 type Category = 'all' | Template['category']

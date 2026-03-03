@@ -1,8 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/Button'
 import { MOCK_EXPERIENCE } from '@/lib/data'
+import ExperienceDrawer from '@/components/ui/resume/ExperienceForm';
+
+
 
 export default function ExperienceSection() {
   return (
@@ -43,9 +45,7 @@ export default function ExperienceSection() {
         </motion.div>
       ))}
 
-      <Button variant="outline" fullWidth size="sm" icon={<span>+</span>}>
-        Add Experience
-      </Button>
+      <ExperienceDrawer />
     </div>
   )
 }

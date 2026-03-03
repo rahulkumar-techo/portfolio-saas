@@ -5,10 +5,11 @@
 
 import analyticsModel from "@/models/resume/analytics.model";
 import EducationsModel from "@/models/resume/Educations.model";
-import experienceModel from "@/models/resume/experience.model";
+import experienceModel, { IExperience } from "@/models/resume/experience.model";
 import projectsModel from "@/models/resume/projects.model";
 import skillsModel from "@/models/resume/skills.model";
 import userModel from "@/models/users/user.model";
+import { ExperienceRequestBody } from "@/types/server-types/resume";
 
 export default class ResumeRepository {
 
@@ -81,7 +82,7 @@ export default class ResumeRepository {
 
     if (!model) return null;
 
-    let doc = await model.findOne({ userId }).lean().exec();
+    let doc = await model.findOne({userId }).lean().exec();
 
     // 🔥 Auto-create if missing
     if (!doc) {
@@ -91,4 +92,35 @@ export default class ResumeRepository {
 
     return { [section]: doc };
   }
+
+  // add experience CRUD
+  async addExperience(userId: string, experienceData: Partial<ExperienceRequestBody>) {
+    console.log("At resume:REPO",
+      experienceData)
+    const experienceId = `exp_${Date.now()}`;
+    const newExperience = await experienceModel.create({
+      userId,
+      experienceId,
+      ...experienceData,
+    });
+    console.log(newExperience)
+    return newExperience.toObject();
+  }
+
+  async updateExperience(userId: string, experienceId: string, updatedData: Partial<IExperience>) {
+    const experience = await experienceModel.findOneAndUpdate(
+      { userId, experienceId },
+      { $set: updatedData },
+      { new: true }
+    ).lean().exec();
+    return experience;
+  }
+
+  async deleteExperience(userId: string, experienceId: string) {
+    await experienceModel.findOneAndDelete({ userId, experienceId }).exec();
+    return { success: true };
+  }
+
+  
+
 }

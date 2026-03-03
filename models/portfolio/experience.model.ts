@@ -5,10 +5,11 @@
 
 import mongoose, { Schema, models } from "mongoose";
 
-interface IExperience {
+export interface IExperience {
   userId: mongoose.Types.ObjectId;
   experienceId: string;
-  role: string;
+  jobRole: string;
+  jobTypes: string;
   company: string;
   period: string;
   description: string;
@@ -24,13 +25,17 @@ const ExperienceSchema = new Schema<IExperience>(
       required: true,
       index: true,
     },
+    jobTypes: {
+      type: String,
+      required: true
+    },
 
     experienceId: {
       type: String,
       required: true,
     },
 
-    role: {
+    jobRole: {
       type: String,
       required: true,
     },
@@ -65,5 +70,23 @@ const ExperienceSchema = new Schema<IExperience>(
 
 ExperienceSchema.index({ userId: 1, experienceId: 1 }, { unique: true });
 
-export default models.Experience ||
-  mongoose.model("Experience", ExperienceSchema);
+const PORTFOLIO_EXPERIENCE_MODEL = "PortfolioExperience";
+
+export default (models[PORTFOLIO_EXPERIENCE_MODEL] as mongoose.Model<IExperience>) ||
+  mongoose.model<IExperience>(PORTFOLIO_EXPERIENCE_MODEL, ExperienceSchema, "portfolio_experiences");
+
+/*
+{
+  "_id": "66fa2d...",
+  "userId": "65fa91d27c23fa...",
+  "experienceId": "exp_001",
+  "jobRole": "Full Stack Developer",
+  "company": "StartupX",
+  "period": "Jan 2023 - Present",
+  "description": "Developed scalable microservices using Node.js and MongoDB. Improved API response time by 40%.",
+  "tech": ["Node.js", "React", "MongoDB", "Redis"],
+  "order": 1,
+  "createdAt": "2026-03-03T...",
+  "updatedAt": "2026-03-03T..."
+}
+*/ 

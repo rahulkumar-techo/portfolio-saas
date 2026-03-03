@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import type { ContactInterface } from '@/hooks/resume/useContact'
 
 interface ContactSectionProps {
