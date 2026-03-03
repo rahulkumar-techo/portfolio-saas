@@ -5,9 +5,15 @@ import StatsGrid from '@/components/dashboard/home/StatsGrid'
 import TrafficChart from '@/components/dashboard/home/TrafficChart'
 import DeviceSplit from '@/components/dashboard/home/DeviceSplit'
 import SkillScores from '@/components/dashboard/home/SkillScores'
-import TopCountries from '@/components/dashboard/home/TopCountries'
+import TopCountries from '@/components/dashboard/home/TopCountries';
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 
 export default function DashboardPage() {
+  
+  const { data: session, status } = useSession()
+  
+  console.log("Rendering DashboardPage", session) // Debug log
   return (
     <div className="space-y-6 max-w-7xl">
       <DashboardHeader />

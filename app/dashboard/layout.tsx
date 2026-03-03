@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { DASHBOARD_NAV, MOCK_USER } from '@/lib/data'
-import { Badge } from '@/components/ui/index'
+import { Badge } from '@/components/ui/index';
+import { signOut } from "next-auth/react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -72,7 +73,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </motion.div>
                 </Link>
               ))}
-
+              {/* Account =====> */}
               <div className="pt-4 mt-4 border-t border-white/5">
                 <p className="text-white/25 text-xs font-medium uppercase tracking-widest px-3 mb-3">Account</p>
                 <Link href="/alexchen" target="_blank">
@@ -87,7 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
                 <div className="sidebar-item text-white/55 cursor-pointer">
                   <span>🚪</span>
-                  <span>Sign Out</span>
+                  <span onClick={() => signOut({ callbackUrl: "/login" })}>Sign Out</span>
                 </div>
               </div>
             </nav>
@@ -160,21 +161,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ── Mobile Bottom Nav ── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-brand-500/10 bg-surface-900/95 backdrop-blur-xl">
         <div className="flex items-center justify-around px-2 py-2">
-          {DASHBOARD_NAV.slice(0, 5).map((item:any) => (
+          {DASHBOARD_NAV.slice(0, 5).map((item: any) => (
             <Link key={item.id} href={item.href} className="flex flex-col items-center gap-1 py-1 px-3 flex-1">
               <motion.div
                 whileTap={{ scale: 0.85 }}
-                className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all ${
-                  activeSection === item.id
+                className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all ${activeSection === item.id
                     ? 'bg-brand-600/20 border border-brand-500/30'
                     : ''
-                }`}
+                  }`}
               >
                 <span className="text-base">{item.icon}</span>
               </motion.div>
-              <span className={`text-xs font-medium truncate w-full text-center ${
-                activeSection === item.id ? 'text-brand-400' : 'text-white/35'
-              }`}>
+              <span className={`text-xs font-medium truncate w-full text-center ${activeSection === item.id ? 'text-brand-400' : 'text-white/35'
+                }`}>
                 {item.label.split(' ')[0]}
               </span>
             </Link>

@@ -1,6 +1,12 @@
 import mongoose, { Schema, models } from "mongoose";
 
-interface IUser {
+interface Image{
+  url: string;
+  alt?: string;
+  ImageId?: string;
+}
+
+export interface IUser {
   name: string;
   username: string;
   title: string;
@@ -11,10 +17,12 @@ interface IUser {
   twitter?: string;
   website?: string;
   password: string;
-  avatar?: string;
+  avatar?: Image;
   bio?: string;
   careerScore: number;
   atsScore: number;
+  isverified?: boolean;
+  role?: "USER" | "ADMIN";
 }
 
 const UserSchema = new Schema<IUser>(
@@ -77,11 +85,6 @@ const UserSchema = new Schema<IUser>(
       default: "",
     },
 
-    avatar: {
-      type: String,
-      default: "",
-    },
-
     bio: {
       type: String,
       default: "Passionate developer building modern web applications.",
@@ -96,6 +99,23 @@ const UserSchema = new Schema<IUser>(
       type: Number,
       default: 0,
     },
+    isverified: {
+      type: Boolean,
+      default: false, 
+    },
+
+    role: {
+      type: String,
+      enum: ["USER", "ADMIN"],
+      default: "USER",
+    },
+    avatar:{
+      url: { type: String, default: "" },
+      alt: { type: String, default: "" },
+      ImageId: { type: String, default: "" },
+    }
+    
+    
   },
   { timestamps: true }
 );
