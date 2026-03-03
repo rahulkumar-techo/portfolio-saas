@@ -29,21 +29,30 @@ export async function POST(req: Request) {
       )
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let usernameBase = email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
+    User.findOne({ username: usernameBase }).then(existing => {
+      if (existing) {
+        usernameBase += Math.floor(Math.random() * 1000); // Simple way to ensure uniqueness
+      }
+    });
+    const username = usernameBase;
 
     await User.create({
+      name,
       email,
+      username,
       password: hashedPassword,
-      name: name || null,
+      provider: "credentials",
     })
 
     return NextResponse.json({ message: "User created" })
   } catch (error: any) {
-  console.error("REGISTER ERROR:", error)
+    console.error("REGISTER ERROR:", error)
 
-  return NextResponse.json(
-    { error: error.message || "Something went wrong" },
-    { status: 500 }
-  )
-}
+    return NextResponse.json(
+      { error: error.message || "Something went wrong" },
+      { status: 500 }
+    )
+  }
 }

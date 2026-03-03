@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     /* 🔐 JWT */
-    async jwt({ token, user, account, profile }:any) {
+    async jwt({ token, user, account, profile }: any) {
 
       // Credentials login
       if (user) {
@@ -137,10 +137,12 @@ export const authOptions: NextAuthOptions = {
             name: profile.name || email.split("@")[0],
             email,
             username,
+            provider: "google",
+            oauthId: profile.sub,
             avatar: {
               url: profile.picture || "",
-              alt: `${profile.name || email}'s avatar`,
-              ImageId: profile.sub || "",
+              alt: `${profile.name}'s avatar`,
+              imageId: profile.sub,
             },
           })
 
@@ -164,7 +166,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     /* 🧩 Session */
-    async session({ session, token }:any) {
+    async session({ session, token }: any) {
       if (session.user && token.id) {
         session.user.id = token.id
         session.user.role = token.role

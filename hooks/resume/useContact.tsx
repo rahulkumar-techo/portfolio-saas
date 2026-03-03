@@ -1,13 +1,15 @@
 /**
- * useContact Hook
+ * useContact Hook 
  * Handles CRUD operations for contact section
  */
 
 'use client'
 
 import { useEffect, useState } from "react"
+import { AxiosError ,isCancel} from "axios"
+import api from "@/lib/axios"
 
-export interface ContactInfo {
+export interface ContactInterface {
   name?: string
   title?: string
   email?: string
@@ -16,78 +18,62 @@ export interface ContactInfo {
   linkedin?: string
 }
 
+
+
 const useContact = () => {
-  const [contact, setContact] = useState<ContactInfo | null>(null)
+  const [contact, setContact] = useState<ContactInterface | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
-  /**
-   * Fetch Contact Section
-   */
-  const fetchContact = async (section: string) => {
+  /* ---------------- Fetch ---------------- */
+
+  const fetchContact = async () => {
     try {
       setLoading(true)
       setError(null)
 
-      const res = await fetch(`/api/resume?section=${section}`)
+      const res = await api.get<any>("/user");
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch contact info")
-      }
+      console.log("Fetched contact info FROM HOOK:", res); // Debug log
 
-      const data = await res.json()
-      setContact(data.data.contactInfo)
+      setContact(res.data.data)
 
-    } catch (err: any) {
-      setError(err.message || "Something went wrong")
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>
+      setError(error.response?.data?.message || "Failed to fetch contact info")
     } finally {
       setLoading(false)
     }
   }
 
-  /**
-   * Update Contact Section
-   */
-  const updateContact = async (updatedData: ContactInfo) => {
+  /* ---------------- Update ---------------- */
+
+  const updateContact = async (updatedData: ContactInterface) => {
     try {
       setLoading(true)
       setError(null)
-      setSuccess(null)
+      setSuccess(null);
+      console.log("Updating contact with data:", updatedData); // Debug log
 
-      const res = await fetch("/api/user", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          section: "contactInfo",
-          data: updatedData,
-        }),
-      })
+      const res = await api.patch<any>("/user", updatedData);
 
-      if (!res.ok) {
-        throw new Error("Failed to update contact info")
-      }
-
-      const data = await res.json()
-
-      setContact(data.data.contactInfo)
+      setContact(res.data.data.ContactInterface)
       setSuccess("Contact updated successfully")
 
-    } catch (err: any) {
-      setError(err.message || "Update failed")
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>
+      setError(error.response?.data?.message || "Update failed")
     } finally {
       setLoading(false)
     }
   }
 
-  /**
-   * Auto fetch on mount
-   */
-  useEffect(() => {
-    fetchContact("contactInfo")
-  }, [])
+  /* ---------------- Auto Fetch ---------------- */
+
+  // useEffect(() => {
+  //   fetchContact()
+  // }, [])
 
   return {
     contact,

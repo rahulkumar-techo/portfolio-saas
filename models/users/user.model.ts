@@ -1,29 +1,49 @@
-import mongoose, { Schema, models } from "mongoose";
+/**
+ * User Model
+ * Multi-provider SaaS ready (Credentials + Google)
+ */
 
-interface Image{
-  url: string;
-  alt?: string;
-  ImageId?: string;
+import mongoose, { Schema, models, Model } from "mongoose"
+
+/* ---------------- Types ---------------- */
+
+export type AuthProvider = "credentials" | "google"
+
+interface Image {
+  url: string
+  alt?: string
+  imageId?: string
 }
 
 export interface IUser {
-  name: string;
-  username: string;
-  title: string;
-  location: string;
-  email: string;
-  github?: string;
-  linkedin?: string;
-  twitter?: string;
-  website?: string;
-  password: string;
-  avatar?: Image;
-  bio?: string;
-  careerScore: number;
-  atsScore: number;
-  isverified?: boolean;
-  role?: "USER" | "ADMIN";
+  name: string
+  username: string
+  email: string
+
+  provider: AuthProvider
+  oauthId?: string
+
+  password?: string
+
+  title?: string
+  location?: string
+
+  github?: string
+  linkedin?: string
+  twitter?: string
+  website?: string
+
+  avatar?: Image
+  bio?: string
+
+  careerScore?: number
+  atsScore?: number
+
+  isVerified?: boolean
+  role?: "USER" | "ADMIN"
 }
+
+/* ---------------- Schema ---------------- */
 
 const UserSchema = new Schema<IUser>(
   {
@@ -41,16 +61,6 @@ const UserSchema = new Schema<IUser>(
       trim: true,
     },
 
-    title: {
-      type: String,
-      default: "Full Stack Developer",
-    },
-
-    location: {
-      type: String,
-      default: "India",
-    },
-
     email: {
       type: String,
       required: true,
@@ -59,10 +69,32 @@ const UserSchema = new Schema<IUser>(
       trim: true,
     },
 
+    provider: {
+      type: String,
+      enum: ["credentials", "google"],
+      required: true,
+    },
+
+    oauthId: {
+      type: String,
+    },
+
     password: {
       type: String,
-      required: true,
       minlength: 6,
+      required: function (this: IUser) {
+        return this.provider === "credentials"
+      },
+    },
+
+    title: {
+      type: String,
+      default: "Full Stack Developer",
+    },
+
+    location: {
+      type: String,
+      default: "India",
     },
 
     github: {
@@ -99,9 +131,10 @@ const UserSchema = new Schema<IUser>(
       type: Number,
       default: 0,
     },
-    isverified: {
+
+    isVerified: {
       type: Boolean,
-      default: false, 
+      default: false,
     },
 
     role: {
@@ -109,15 +142,19 @@ const UserSchema = new Schema<IUser>(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
-    avatar:{
+
+    avatar: {
       url: { type: String, default: "" },
       alt: { type: String, default: "" },
-      ImageId: { type: String, default: "" },
-    }
-    
-    
+      imageId: { type: String, default: "" },
+    },
   },
   { timestamps: true }
-);
+)
 
-export default models.User || mongoose.model("User", UserSchema);
+/* ---------------- Model Export ---------------- */
+
+const User: Model<IUser> =
+  models.User || mongoose.model<IUser>("User", UserSchema)
+
+export default User
