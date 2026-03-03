@@ -10,8 +10,8 @@ export function PricingSection() {
   const [annual, setAnnual] = useState(false)
 
   return (
-    <Section id="pricing" className="relative">
-      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-cyan-500/4 rounded-full blur-[120px] pointer-events-none" />
+    <Section id="pricing" className="relative overflow-hidden">
+      <div className="absolute top-1/2 right-0 w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] lg:w-[500px] lg:h-[500px] bg-cyan-500/4 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none" />
 
       <SectionHeader
         eyebrow="Simple Pricing"
@@ -21,10 +21,12 @@ export function PricingSection() {
       />
 
       {/* Toggle */}
-      <div className="flex items-center justify-center gap-4 mb-12">
-        <span className={`text-sm font-medium ${!annual ? 'text-white' : 'text-white/40'}`}>Monthly</span>
+      <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap mb-10 sm:mb-12">
+        <span className={`text-xs sm:text-sm font-medium ${!annual ? 'text-white' : 'text-white/40'}`}>Monthly</span>
         <button
           onClick={() => setAnnual(!annual)}
+          aria-pressed={annual}
+          aria-label="Toggle annual pricing"
           className={`relative w-14 h-7 rounded-full transition-colors duration-300 ${annual ? 'bg-brand-600' : 'bg-white/10'}`}
         >
           <motion.div
@@ -33,9 +35,9 @@ export function PricingSection() {
             className="absolute top-1 w-5 h-5 bg-white rounded-full shadow-md"
           />
         </button>
-        <span className={`text-sm font-medium ${annual ? 'text-white' : 'text-white/40'}`}>
+        <span className={`text-xs sm:text-sm font-medium inline-flex items-center ${annual ? 'text-white' : 'text-white/40'}`}>
           Annual
-          <Badge variant="green" className="ml-2">Save 40%</Badge>
+          <Badge variant="green" className="ml-2 whitespace-nowrap">Save 40%</Badge>
         </span>
       </div>
 
@@ -47,7 +49,7 @@ export function PricingSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
-            className={`relative rounded-2xl p-8 ${
+            className={`relative rounded-2xl p-6 sm:p-8 ${
               plan.highlighted
                 ? 'bg-gradient-to-b from-brand-600/20 to-brand-900/20 border-2 border-brand-500/40'
                 : 'glass border border-white/5'

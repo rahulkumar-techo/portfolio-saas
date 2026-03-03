@@ -5,13 +5,10 @@ import { PricingSection } from '@/components/landing/PricingSection'
 import { Footer } from '@/components/landing/Footer'
 import { Divider } from '@/components/ui/index'
 
-
-type Props = {}
-
-const page = (props: Props) => {
+const page = () => {
   return (
-    <div>
-         <Navbar />
+    <div className='min-h-screen w-full overflow-x-hidden bg-background'>
+      <Navbar />
       <HeroSection />
       <Divider />
       <FeaturesSection />

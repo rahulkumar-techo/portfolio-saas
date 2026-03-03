@@ -1,14 +1,14 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Section, SectionHeader, Card, Badge } from '@/components/ui/index'
+import { Section, SectionHeader, Badge } from '@/components/ui/index'
 import { FEATURES } from '@/lib/data'
 
 export function FeaturesSection() {
   return (
-    <Section id="features" className="relative">
+    <Section id="features" className="relative overflow-hidden">
       {/* Bg glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-600/4 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] sm:w-[620px] sm:h-[620px] lg:w-[800px] lg:h-[800px] bg-brand-600/4 rounded-full blur-[120px] sm:blur-[150px] pointer-events-none" />
 
       <SectionHeader
         eyebrow="Platform Features"
@@ -17,7 +17,7 @@ export function FeaturesSection() {
         description="From AI-powered resume parsing to real-time ATS scoring — we cover every step of your job search journey."
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {FEATURES.map((feature, i) => (
           <motion.div
             key={feature.id}
@@ -37,10 +37,10 @@ export function FeaturesSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="mt-16 p-8 rounded-2xl glass border border-brand-500/15 text-center"
+        className="mt-14 sm:mt-16 p-6 sm:p-8 rounded-2xl glass border border-brand-500/15 text-center"
       >
         <p className="text-white/50 text-sm mb-3">Trusted by engineers at</p>
-        <div className="flex items-center justify-center gap-8 flex-wrap">
+        <div className="flex items-center justify-center gap-x-5 gap-y-3 sm:gap-8 flex-wrap">
           {['Google', 'Meta', 'Stripe', 'Vercel', 'Linear', 'Notion'].map((co) => (
             <span key={co} className="text-white/25 font-display font-semibold text-base tracking-wide hover:text-white/50 transition-colors">
               {co}

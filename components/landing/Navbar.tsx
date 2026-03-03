@@ -29,6 +29,21 @@ export function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false)
+    }
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('resize', onResize)
+    window.addEventListener('keydown', onEsc)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('keydown', onEsc)
+    }
+  }, [])
+
   return (
     <>
       <motion.nav
@@ -42,7 +57,7 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-18">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center relative overflow-hidden">
@@ -80,6 +95,7 @@ export function Navbar() {
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl border border-white/10 hover:border-brand-500/40 transition-colors"
                 aria-label="Toggle menu"
+                aria-expanded={menuOpen}
               >
                 <motion.span
                   animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
@@ -115,7 +131,7 @@ export function Navbar() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '-100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 z-50 w-[280px] glass-strong border-r border-brand-500/20 flex flex-col"
+              className="fixed top-0 left-0 bottom-0 z-50 w-[86vw] max-w-[320px] glass-strong border-r border-brand-500/20 flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-brand-500/10">

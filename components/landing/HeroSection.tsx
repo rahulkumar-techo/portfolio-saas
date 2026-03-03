@@ -79,7 +79,7 @@ export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
+    const check = () => setIsMobile(window.innerWidth < 1024)
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
@@ -104,9 +104,9 @@ export function HeroSection() {
       {/* Background layers */}
       <div className="absolute inset-0 grid-bg opacity-40" />
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-brand-600/8 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] rounded-full bg-cyan-500/6 blur-[100px] pointer-events-none" />
-        <div className="absolute top-2/3 left-1/3 w-[400px] h-[400px] rounded-full bg-pink-500/5 blur-[80px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/4 w-[340px] h-[340px] sm:w-[480px] sm:h-[480px] lg:w-[600px] lg:h-[600px] rounded-full bg-brand-600/8 blur-[80px] sm:blur-[100px] lg:blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/4 w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] lg:w-[500px] lg:h-[500px] rounded-full bg-cyan-500/6 blur-[70px] sm:blur-[90px] lg:blur-[100px] pointer-events-none" />
+        <div className="absolute top-2/3 left-1/3 w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] lg:w-[400px] lg:h-[400px] rounded-full bg-pink-500/5 blur-[60px] sm:blur-[75px] lg:blur-[80px] pointer-events-none" />
       </div>
 
       {/* 3D Canvas — full coverage on desktop, top portion on mobile */}
@@ -117,15 +117,15 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         <div className="max-w-7xl mx-auto w-full">
-          <div className={`grid ${isMobile ? 'grid-cols-1 text-center' : 'grid-cols-2 items-center'} gap-12 lg:gap-20`}>
+          <div className="grid grid-cols-1 text-center lg:grid-cols-2 lg:items-center lg:text-left gap-12 lg:gap-20">
             {/* Left: Text content */}
-            <div className={`${isMobile ? 'pt-[45vh]' : ''} space-y-8`}>
+            <div className="pt-[42vh] sm:pt-[40vh] lg:pt-0 space-y-8">
               {/* Eyebrow */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex items-center gap-3 flex-wrap justify-center md:justify-start"
+                className="flex items-center gap-3 flex-wrap justify-center lg:justify-start"
               >
                 <Badge variant="blue" dot>New — AI Career Score v2.0</Badge>
                 <Badge variant="cyan">GPT-4 Powered</Badge>
@@ -152,7 +152,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.45 }}
-                className="text-white/55 text-base sm:text-lg lg:text-xl leading-relaxed max-w-xl mx-auto md:mx-0"
+                className="text-white/55 text-base sm:text-lg lg:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0"
               >
                 Convert your resume into a professional portfolio and job-winning CV in seconds. Beat ATS filters and land{' '}
                 <span className="text-white/80 font-medium">3× more interviews</span>.
@@ -163,15 +163,15 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
-                <Link href="/dashboard">
+                <Link href="/dashboard" className="w-full sm:w-auto">
                   <Button size="lg" glow className="text-base px-8 py-4 w-full sm:w-auto">
                     <span>✨</span>
                     Generate Portfolio
                   </Button>
                 </Link>
-                <Link href="/dashboard">
+                <Link href="/dashboard" className="w-full sm:w-auto">
                   <Button variant="secondary" size="lg" className="text-base px-8 py-4 w-full sm:w-auto">
                     <span>📄</span>
                     Create ATS Resume
@@ -184,7 +184,7 @@ export function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.75 }}
-                className="flex items-center gap-4 justify-center md:justify-start text-sm text-white/35"
+                className="flex items-center gap-4 justify-center lg:justify-start text-sm text-white/35 flex-wrap"
               >
                 <span className="flex items-center gap-1.5">
                   <span className="text-emerald-400">✓</span> No credit card
@@ -199,39 +199,37 @@ export function HeroSection() {
             </div>
 
             {/* Right: Visual (desktop only — mobile uses full canvas behind) */}
-            {!isMobile && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="relative h-[500px] flex items-center justify-center"
-              >
-                {/* Decorative ring */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-[400px] h-[400px] rounded-full border border-brand-500/10 animate-spin-slow" />
-                  <div className="absolute w-[300px] h-[300px] rounded-full border border-cyan-500/10 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }} />
-                </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="relative h-[500px] items-center justify-center hidden lg:flex"
+            >
+              {/* Decorative ring */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-[400px] h-[400px] rounded-full border border-brand-500/10 animate-spin-slow" />
+                <div className="absolute w-[300px] h-[300px] rounded-full border border-cyan-500/10 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }} />
+              </div>
 
-                {/* Floating stats cards */}
-                {[
-                  { label: 'ATS Score', value: '97/100', color: '#22d3ee', pos: 'top-8 left-4' },
-                  { label: 'Career Score', value: '★ 9.2', color: '#fbbf24', pos: 'top-24 right-0' },
-                  { label: 'Profile Views', value: '+340%', color: '#34d399', pos: 'bottom-24 left-0' },
-                ].map((card, idx) => (
-                  <motion.div
-                    key={card.label}
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 4 + idx * 0.75, repeat: Infinity, ease: 'easeInOut' }}
-                    className={`absolute ${card.pos} glass rounded-xl p-3 border-gradient`}
-                  >
-                    <div className="text-white/40 text-xs mb-1">{card.label}</div>
-                    <div className="font-display font-bold text-lg" style={{ color: card.color }}>
-                      {card.value}
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
+              {/* Floating stats cards */}
+              {[
+                { label: 'ATS Score', value: '97/100', color: '#22d3ee', pos: 'top-8 left-4' },
+                { label: 'Career Score', value: '★ 9.2', color: '#fbbf24', pos: 'top-24 right-0' },
+                { label: 'Profile Views', value: '+340%', color: '#34d399', pos: 'bottom-24 left-0' },
+              ].map((card, idx) => (
+                <motion.div
+                  key={card.label}
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 4 + idx * 0.75, repeat: Infinity, ease: 'easeInOut' }}
+                  className={`absolute ${card.pos} glass rounded-xl p-3 border-gradient`}
+                >
+                  <div className="text-white/40 text-xs mb-1">{card.label}</div>
+                  <div className="font-display font-bold text-lg" style={{ color: card.color }}>
+                    {card.value}
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
 
           {/* Stats Row */}
