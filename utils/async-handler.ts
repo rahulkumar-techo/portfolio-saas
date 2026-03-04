@@ -8,12 +8,15 @@ import { AppError } from "./app-error";
 
 type RouteHandler = (
   req: Request,
-  context?: { params?: Record<string, string> }
+  context?: { params?: Record<string, string> | Promise<Record<string, string>> }
 ) => Promise<Response>;
 
 export const asyncHandler =
   (handler: RouteHandler) =>
-  async (req: Request, context?: { params?: Record<string, string> }) => {
+  async (
+    req: Request,
+    context?: { params?: Record<string, string> | Promise<Record<string, string>> }
+  ) => {
     try {
       return await handler(req, context);
     } catch (error: unknown) {

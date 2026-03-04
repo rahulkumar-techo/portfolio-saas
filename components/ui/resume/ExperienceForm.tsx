@@ -1,368 +1,255 @@
 /**
- * Premium Experience Drawer
- * Glass UI + Dynamic Tech Badges
+ * Experience Form (Reusable - Page Based)
+ * Pure Controlled Form
  */
 
 "use client";
 
-import { useState } from "react";
-import {
-    Drawer,
-    DrawerContent,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X } from "lucide-react";
-import { SecondaryButton } from "../secondary-button";
 import { PrimaryButton } from "../primary-button";
 import { generateColorFromString } from "@/lib/random-color";
-import useResume from "@/hooks/resume/useResume";
 import { ExperienceRequestBody } from "@/types/server-types/resume";
 
-
+interface ExperienceFormProps {
+  initialData?: Partial<ExperienceRequestBody> | null;
+  loading?: boolean;
+  onSubmit: (data: ExperienceRequestBody) => Promise<void>;
+}
 
 const jobTypes = [
-    "Full-time",
-    "Part-time",
-    "Internship",
-    "Contract",
-    "Freelance",
-    "Remote",
-    "Hybrid",
-    "On-site",
+  "Full-time",
+  "Part-time",
+  "Internship",
+  "Contract",
+  "Freelance",
+  "Remote",
+  "Hybrid",
+  "On-site",
 ];
 
-export default function ExperienceDrawer() {
-    const INITIAL_FORM_DATA: ExperienceRequestBody = {
-        jobRole: "",
-        jobType: "",
-        company: "",
-        period: "",
-        description: "",
-        tech: [],
-        order: 0,
-    };
+const defaultForm: ExperienceRequestBody = {
+  jobRole: "",
+  jobType: "",
+  company: "",
+  period: "",
+  description: "",
+  tech: [],
+  order: 0,
+};
 
-    const [formData, setFormData] = useState<ExperienceRequestBody>({
-        ...INITIAL_FORM_DATA,
+export default function ExperienceForm({
+  initialData,
+  loading = false,
+  onSubmit,
+}: ExperienceFormProps) {
+
+  const [formData, setFormData] = useState(defaultForm);
+  const [techInput, setTechInput] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        ...defaultForm,
+        ...initialData,
+        tech: Array.isArray(initialData.tech) ? initialData.tech : [],
+      });
+    }
+  }, [initialData]);
+
+  const validate = () => {
+    if (!formData.jobRole.trim()) return "Job role is required";
+    if (!formData.jobType.trim()) return "Job type is required";
+    if (!formData.company.trim()) return "Company is required";
+    if (!formData.period.trim()) return "Period is required";
+    if (!formData.description.trim()) return "Description is required";
+    return null;
+  };
+
+  const addTech = (value: string) => {
+    const items = value
+      .split(/[\s,]+/)
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    setFormData((prev) => ({
+      ...prev,
+      tech: [...new Set([...prev.tech, ...items])],
+    }));
+  };
+
+  const removeTech = (tech: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      tech: prev.tech.filter((t) => t !== tech),
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    await onSubmit({
+      ...formData,
+      jobRole: formData.jobRole.trim(),
+      jobType: formData.jobType.trim(),
+      company: formData.company.trim(),
+      period: formData.period.trim(),
+      description: formData.description.trim(),
     });
-    const [open, setOpen] = useState(false);
-    const [techInput, setTechInput] = useState("");
-    const [formError, setFormError] = useState<string | null>(null);
 
-    const addTech = (value: string) => {
-        const newTechs = value
-            .split(/[\s,]+/)
-            .map((t) => t.trim())
-            .filter(Boolean);
+    setError(null);
+  };
 
-        setFormData((prev) => ({
-            ...prev,
-            tech: [...new Set([...prev.tech, ...newTechs])],
-        }));
-    };
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-3xl mx-auto space-y-6 bg-background p-8 rounded-2xl border"
+    >
+      <h2 className="text-xl font-bold">
+        {initialData ? "Update Experience" : "Add Experience"}
+      </h2>
 
-    const removeTech = (tech: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            tech: prev.tech.filter((t) => t !== tech),
-        }));
-    };
-    const { addExperience, loading, error } = useResume();
+      {/* Job Role */}
+      <div>
+        <Label>Job Role *</Label>
+        <Input
+          value={formData.jobRole}
+          onChange={(e) =>
+            setFormData({ ...formData, jobRole: e.target.value })
+          }
+        />
+      </div>
 
-    const validateForm = (data: ExperienceRequestBody) => {
-        if (!data.jobRole.trim()) return "Job role is required.";
-        if (!data.jobType.trim()) return "Job type is required.";
-        if (!data.company.trim()) return "Company is required.";
-        if (!data.period.trim()) return "Period is required.";
-        if (!data.description.trim()) return "Description is required.";
-        if (!Number.isFinite(data.order) || data.order < 0) {
-            return "Display order must be a non-negative number.";
-        }
-        return null;
-    };
-
-    const handleSubmit = async () => {
-        if (loading) return;
-
-        setFormError(null);
-
-        const parsedTech = [
-            ...new Set([
-                ...formData.tech,
-                ...techInput
-                    .split(/[\s,]+/)
-                    .map((t) => t.trim())
-                    .filter(Boolean),
-            ]),
-        ];
-
-        const payload: ExperienceRequestBody = {
-            ...formData,
-            jobRole: formData.jobRole.trim(),
-            jobType: formData.jobType.trim(),
-            company: formData.company.trim(),
-            period: formData.period.trim(),
-            description: formData.description.trim(),
-            tech: parsedTech,
-            order: Number.isFinite(formData.order) ? formData.order : 0,
-        };
-
-        const validationError = validateForm(payload);
-        if (validationError) {
-            setFormError(validationError);
-            return;
-        }
-
-        const created = await addExperience(payload);
-        if (!created) return;
-
-        setFormData({ ...INITIAL_FORM_DATA });
-        setTechInput("");
-        setFormError(null);
-        setOpen(false);
-    };
-
-    return (
-        <Drawer
-            open={open}
-            onOpenChange={(nextOpen) => {
-                setOpen(nextOpen);
-                if (!nextOpen) {
-                    setFormError(null);
-                    setFormData({ ...INITIAL_FORM_DATA });
-                    setTechInput("");
-                }
-            }}
+      {/* Job Type */}
+      <div>
+        <Label>Job Type *</Label>
+        <Select
+          value={formData.jobType}
+          onValueChange={(value) =>
+            setFormData({ ...formData, jobType: value })
+          }
         >
-            <DrawerTrigger asChild>
-                <SecondaryButton>
-                    Add Experience +
+          <SelectTrigger>
+            <SelectValue placeholder="Select job type" />
+          </SelectTrigger>
+          <SelectContent>
+            {jobTypes.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-                </SecondaryButton>
-            </DrawerTrigger>
+      {/* Company */}
+      <div>
+        <Label>Company *</Label>
+        <Input
+          value={formData.company}
+          onChange={(e) =>
+            setFormData({ ...formData, company: e.target.value })
+          }
+        />
+      </div>
 
-            <DrawerContent
-                className="
-    bg-background/95
-    backdrop-blur-2xl
-    border-t
-    rounded-t-3xl
-    shadow-2xl
-    h-[90vh]
-    flex flex-col">
-                <DrawerHeader>
-                    <DrawerTitle className="text-xl font-semibold tracking-tight">
-                        Add Experience
-                    </DrawerTitle>
-                </DrawerHeader>
+      {/* Period */}
+      <div>
+        <Label>Period *</Label>
+        <Input
+          value={formData.period}
+          onChange={(e) =>
+            setFormData({ ...formData, period: e.target.value })
+          }
+        />
+      </div>
 
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSubmit();
-                    }}
-                    className="flex-1 overflow-y-auto px-6 pb-8"
-                >
-                    <div className="space-y-8">
+      {/* Description */}
+      <div>
+        <Label>Description *</Label>
+        <Textarea
+          rows={4}
+          value={formData.description}
+          onChange={(e) =>
+            setFormData({ ...formData, description: e.target.value })
+          }
+        />
+      </div>
 
-                        {/* ===== BASIC INFO SECTION ===== */}
-                        <div className="space-y-6">
-                            <h3 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                                Basic Information
-                            </h3>
+      {/* Tech */}
+      <div>
+        <Label>Technologies</Label>
+        <Input
+          placeholder="Press space or enter"
+          value={techInput}
+          onChange={(e) => setTechInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (["Enter", " ", ","].includes(e.key)) {
+              e.preventDefault();
+              if (techInput.trim()) {
+                addTech(techInput);
+                setTechInput("");
+              }
+            }
+          }}
+        />
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="flex flex-wrap gap-2 mt-2">
+          {(formData.tech ?? []).map((tech) => (
+            <Badge
+              key={tech}
+              style={{
+                backgroundColor: generateColorFromString(tech),
+              }}
+              className="text-white flex items-center gap-1"
+            >
+              {tech}
+              <X
+                size={14}
+                className="cursor-pointer"
+                onClick={() => removeTech(tech)}
+              />
+            </Badge>
+          ))}
+        </div>
+      </div>
 
-                                {/* Job Role */}
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-medium">
-                                        Job Role <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Input
-                                        required
-                                        placeholder="Senior Frontend Developer"
-                                        className="h-11 rounded-lg bg-muted/40 border-border/60 focus-visible:ring-1"
-                                        value={formData.jobRole}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, jobRole: e.target.value })
-                                        }
-                                    />
-                                </div>
+      {/* Order */}
+      <div>
+        <Label>Display Order</Label>
+        <Input
+          type="number"
+          min={0}
+          value={formData.order}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              order: Number(e.target.value),
+            })
+          }
+        />
+      </div>
 
-                                {/* Job Type */}
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-medium">
-                                        Job Type <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Select
-                                        value={formData.jobType}
-                                        onValueChange={(value) =>
-                                            setFormData({ ...formData, jobType: value })
-                                        }
-                                    >
-                                        <SelectTrigger className="h-11 rounded-lg bg-muted/40 border-border/60">
-                                            <SelectValue placeholder="Select job type" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-popover border shadow-lg">
-                                            {jobTypes.map((type) => (
-                                                <SelectItem key={type} value={type}>
-                                                    {type}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+      {error && (
+        <p className="text-sm text-red-500 text-center">{error}</p>
+      )}
 
-                                {/* Company */}
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-medium">
-                                        Company <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Input
-                                        required
-                                        placeholder="Company name"
-                                        className="h-11 rounded-lg bg-muted/40 border-border/60"
-                                        value={formData.company}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, company: e.target.value })
-                                        }
-                                    />
-                                </div>
-
-                                {/* Period */}
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-medium">
-                                        Period <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Input
-                                        required
-                                        placeholder="Jan 2023 - Present"
-                                        className="h-11 rounded-lg bg-muted/40 border-border/60"
-                                        value={formData.period}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, period: e.target.value })
-                                        }
-                                    />
-                                </div>
-
-                            </div>
-                        </div>
-
-                        {/* ===== DESCRIPTION SECTION ===== */}
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                                Role Details
-                            </h3>
-
-                            <div className="space-y-2">
-                                <Label className="text-sm font-medium">
-                                    Description <span className="text-red-500">*</span>
-                                </Label>
-                                <Textarea
-                                    required
-                                    rows={5}
-                                    placeholder="Describe your measurable impact..."
-                                    className="rounded-lg bg-muted/40 border-border/60 resize-none"
-                                    value={formData.description}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, description: e.target.value })
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        {/* ===== TECH SECTION ===== */}
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-                                Technologies Used
-                            </h3>
-
-                            <div className="space-y-3 p-4 rounded-xl border bg-muted/20">
-                                <Input
-                                    placeholder="Type and press space, comma or enter"
-                                    className="h-11 rounded-lg bg-background border-border/60"
-                                    value={techInput}
-                                    onChange={(e) => setTechInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (["Enter", " ", ","].includes(e.key)) {
-                                            e.preventDefault();
-                                            if (techInput.trim()) {
-                                                addTech(techInput);
-                                                setTechInput("");
-                                            }
-                                        }
-                                    }}
-                                />
-
-                                <div className="flex flex-wrap gap-2 min-h-6">
-                                    {formData.tech.map((tech) => (
-                                        <Badge
-                                            key={tech}
-                                            className="px-3 py-1 rounded-md text-xs flex items-center gap-1 text-white"
-                                            style={{ backgroundColor: generateColorFromString(tech) }}
-                                        >
-                                            {tech}
-                                            <button
-                                                type="button"
-                                                onClick={() => removeTech(tech)}
-                                                className="ml-1 opacity-70 hover:opacity-100"
-                                            >
-                                                <X size={14} />
-                                            </button>
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* ===== ORDER SECTION ===== */}
-                        <div className="space-y-2 max-w-xs">
-                            <Label className="text-sm font-medium">
-                                Display Order
-                            </Label>
-                            <Input
-                                type="number"
-                                min={0}
-                                className="h-11 rounded-lg bg-muted/40 border-border/60"
-                                value={formData.order}
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        order: Number(e.target.value),
-                                    })
-                                }
-                            />
-                        </div>
-
-                    </div>
-
-                    {/* ===== FOOTER ACTION ===== */}
-                    <div className="pt-8 border-t mt-8 flex flex-col items-center justify-center">
-                        {(formError || error) && (
-                            <p className="text-sm text-red-500 text-center mb-3 w-full">
-                                {formError || error}
-                            </p>
-                        )}
-                        <PrimaryButton type="submit" loading={loading} className="border-white border-2">
-                            Save Experience
-
-                        </PrimaryButton>
-                    </div>
-                </form>
-            </DrawerContent>
-        </Drawer>
-    );
+      <PrimaryButton type="submit" loading={loading}>
+        {initialData ? "Update" : "Save"}
+      </PrimaryButton>
+    </form>
+  );
 }

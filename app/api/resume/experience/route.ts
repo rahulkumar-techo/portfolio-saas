@@ -9,10 +9,8 @@ import { connectDB } from "@/lib/db";
 
 
 export const POST = asyncHandler(async (req: Request) => {
- const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions)
 
-
-    console.log("Session:Resume EXperience  (Debug session data)", session?.user); //
 
     if (!session?.user?.id) {
         return ResponseHandler.unauthorized("Unauthorized access");
@@ -38,25 +36,64 @@ export const POST = asyncHandler(async (req: Request) => {
         company,
         period,
         description,
-        tech,
+        tech: Array.isArray(tech) ? tech : [],
         order,
     });
 
-
-    // Placeholder for add experience logic
     return ResponseHandler.ok(exp, "Experience added successfully");
 }
 );
 
 
 export const PUT = asyncHandler(async (req: Request) => {
-    // Placeholder for update experience logic
-    return new Response(JSON.stringify({ message: "Update experience - To be implemented" }), { status: 200 });
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+        return ResponseHandler.unauthorized("Unauthorized access");
+    }
+
+    const userId = session.user.id;
+
+    if (!userId) {
+        return ResponseHandler.unauthorized("Unauthorized access");
+    }
+
+    await connectDB();
+
+    const { experienceId, body } = await req.json() as { body: ExperienceRequestBody, experienceId: string };
+
+    if (!experienceId || !body) {
+        return ResponseHandler.badRequest("experienceId and body are required");
+    }
+
+    const exp = await experienceService.update(userId, experienceId, body)
+    if (!exp) {
+        return ResponseHandler.notFound("Experience not found");
+    }
+
+    return ResponseHandler.ok(exp, "Experience updated successfully");
 });
 
 export const DELETE = asyncHandler(async (req: Request) => {
-    // Placeholder for delete experience logic
-    return new Response(JSON.stringify({ message: "Delete experience - To be implemented" }), { status: 200 });
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+        return ResponseHandler.unauthorized("Unauthorized access");
+    }
+
+    const userId = session.user.id;
+    await connectDB();
+
+    const { experienceId } = await req.json() as { experienceId?: string };
+    if (!experienceId) {
+        return ResponseHandler.badRequest("Experience ID is required");
+    }
+
+    const result = await experienceService.delete(userId, experienceId);
+    if (!result?.success) {
+        return ResponseHandler.notFound("Experience not found");
+    }
+
+    return ResponseHandler.ok(result, "Experience deleted successfully");
 });
 
 

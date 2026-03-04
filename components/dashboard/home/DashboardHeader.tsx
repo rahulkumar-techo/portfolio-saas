@@ -17,7 +17,7 @@ export default function DashboardHeader() {
 
       <div className="flex gap-3">
         <Button variant="outline" size="sm">📤 Export PDF</Button>
-        <Button size="sm" glow>✏️ Edit Portfolio</Button>
+        <Button size="sm" >✏️ Edit Portfolio</Button>
       </div>
     </div>
   )

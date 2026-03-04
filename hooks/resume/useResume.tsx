@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 // type Props = {}
 
-const useResume = () => {
+const useExperience = () => {
     const [resume, setResume] = useState<any | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -56,6 +56,49 @@ const useResume = () => {
         }
     }
 
+    const updateExperience = async (  experienceData: Partial<ExperienceRequestBody>,experienceId:string) => {
+        try {
+            setLoading(true);
+            setError(null);
+            setSuccess(null);
+
+            const res = await api.put("/resume/experience", {experienceData,experienceId});
+            setSuccess("Experience added successfully");
+            setExperience(res?.data?.data)
+            return res?.data?.data ?? null;
+
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Failed to add experience");
+            return null;
+        }
+        finally {
+            setLoading(false);
+
+        }
+    }
+
+    // del exp
+    const deleteExperience = async (experienceId: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      await api.delete("/resume/experience", {
+        data: { experienceId }, // 🔥 axios requires body inside data
+      });
+
+
+      return true;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to delete experience");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
 
     return {
         resume,
@@ -65,8 +108,10 @@ const useResume = () => {
         fetchResume,
         experience,
         setExperience,
-        addExperience
+        addExperience,
+        updateExperience,
+        deleteExperience
     }
 }
 
-export default useResume
+export default useExperience

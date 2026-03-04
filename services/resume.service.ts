@@ -32,7 +32,7 @@ class ResumeService {
     if (!userId) {
       throw new AppError("User ID is required", 400);
     }
-    console.log("Fetching full resume for userId:", userId); // Debug userId
+    console.log("Fetching full resume for userId:", userId,section); // Debug userId
 
     const allowedSections = [
       "contactInfo",
@@ -48,9 +48,10 @@ class ResumeService {
     }
 
     const data = await this.resumeRepo.getResumeSection(userId, section);
+    console.log(data)
 
 
-    if (!data || Object.keys(data).length === 0) {
+    if (!data) {
       throw new AppError("Resume section not found", 404);
     }
     console.log(`Fetched section (${section}) for userId ${userId}:`, data); // Debug fetched section data

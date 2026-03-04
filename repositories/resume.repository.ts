@@ -10,6 +10,7 @@ import projectsModel from "@/models/resume/projects.model";
 import skillsModel from "@/models/resume/skills.model";
 import userModel from "@/models/users/user.model";
 import { ExperienceRequestBody } from "@/types/server-types/resume";
+import mongoose from "mongoose";
 
 export default class ResumeRepository {
 
@@ -63,9 +64,9 @@ export default class ResumeRepository {
   /**
    * Fetch Single Resume Section
    */
-  async getResumeSection(userId: string, section: string) {
 
-    // Contact is special (comes from userModel)
+  async getResumeSection(userId: string, section: string) {
+    // 🔐 CONTACT
     if (section === "contactInfo") {
       const user = await userModel
         .findById(userId)
@@ -76,51 +77,104 @@ export default class ResumeRepository {
       return { contactInfo: user };
     }
 
+    // 🔥 EXPERIENCE (multi-doc)
+    if (section === "experience") {
+      const experiences = await experienceModel
+        .find({ userId: new mongoose.Types.ObjectId(userId) })
+        .sort({ order: 1 })
+        .lean()
+        .exec();
+
+      return experiences;
+    }
+
+    // 🔥 SKILLS (single-doc)
+    if (section === "skills") {
+      let skills = await skillsModel
+        .findOne({ userId })
+        .lean()
+        .exec();
+
+      if (!skills) {
+        const created = await skillsModel.create({
+          userId,
+          skills: [],
+        });
+        skills = created.toObject();
+      }
+
+      return skills;
+    }
+
+    // 🔵 OTHER SINGLE SECTIONS
     const model = this.sectionModelMap[
       section as keyof typeof this.sectionModelMap
     ];
 
     if (!model) return null;
 
-    let doc = await model.findOne({userId }).lean().exec();
+    let doc = await model.findOne({ userId }).lean().exec();
 
-    // 🔥 Auto-create if missing
     if (!doc) {
       const created = await model.create({ userId });
       doc = created.toObject();
     }
 
-    return { [section]: doc };
+    return doc;
   }
 
   // add experience CRUD
   async addExperience(userId: string, experienceData: Partial<ExperienceRequestBody>) {
-    console.log("At resume:REPO",
-      experienceData)
     const experienceId = `exp_${Date.now()}`;
     const newExperience = await experienceModel.create({
       userId,
       experienceId,
       ...experienceData,
     });
-    console.log(newExperience)
     return newExperience.toObject();
   }
 
-  async updateExperience(userId: string, experienceId: string, updatedData: Partial<IExperience>) {
-    const experience = await experienceModel.findOneAndUpdate(
-      { userId, experienceId },
-      { $set: updatedData },
-      { new: true }
-    ).lean().exec();
-    return experience;
+  private buildExperienceQuery(userId: string, experienceRef: string) {
+    if (mongoose.Types.ObjectId.isValid(experienceRef)) {
+      return {
+        userId,
+        $or: [{ _id: experienceRef }, { experienceId: experienceRef }],
+      };
+    }
+
+    return { userId, experienceId: experienceRef };
+  }
+
+  async updateExperience(
+    userId: string,
+    experienceId: string,
+    updatedData: Partial<IExperience>
+  ) {
+    return await experienceModel
+      .findOneAndUpdate(
+        this.buildExperienceQuery(userId, experienceId),
+        { $set: updatedData },
+        { new: true }
+      )
+      .lean()
+      .exec();
   }
 
   async deleteExperience(userId: string, experienceId: string) {
-    await experienceModel.findOneAndDelete({ userId, experienceId }).exec();
-    return { success: true };
+    const deleted = await experienceModel
+      .findOneAndDelete(this.buildExperienceQuery(userId, experienceId))
+      .lean()
+      .exec();
+
+    return { success: !!deleted };
   }
 
-  
+  async getExperienceById(userId: string, experienceId: string) {
+    return await experienceModel
+      .findOne(this.buildExperienceQuery(userId, experienceId))
+      .lean()
+      .exec();
+  }
+
 
 }

@@ -8,6 +8,7 @@ import { ResponseHandler } from "@/utils/response-handler";
 import { asyncHandler } from "@/utils/async-handler";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { connectDB } from "@/lib/db";
 
 export const GET = asyncHandler(async (req: Request) => {
   // 🔐 Get user (replace with your auth logic)
@@ -23,6 +24,9 @@ export const GET = asyncHandler(async (req: Request) => {
 
   const { searchParams } = new URL(req.url);
   const section = searchParams.get("section");
+
+  // connect to db
+  await connectDB();
 
   // If section query exists → fetch specific section
   if (section) {

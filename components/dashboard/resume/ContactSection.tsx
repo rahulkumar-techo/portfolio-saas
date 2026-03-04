@@ -100,7 +100,7 @@ export default function ContactSection({
       </div>
 
       <div className="mt-4 flex justify-end">
-        <Button size="sm" glow onClick={handleSaveChanges}>
+        <Button size="sm"  onClick={handleSaveChanges}>
           Save Changes
         </Button>
       </div>

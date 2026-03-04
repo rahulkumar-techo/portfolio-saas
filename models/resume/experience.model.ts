@@ -70,4 +70,4 @@ const ExperienceSchema = new Schema<IExperience>(
 
 ExperienceSchema.index({ userId: 1, experienceId: 1 }, { unique: true });
 
-export default models.UserSkills || mongoose.model("experience", ExperienceSchema);
+export default models.Experience || mongoose.model("Experience", ExperienceSchema);
