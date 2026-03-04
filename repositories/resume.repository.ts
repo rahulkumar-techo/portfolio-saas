@@ -209,6 +209,7 @@ export default class ResumeRepository {
       .exec();
   }
 
+  // EDUCATION📔📕📖
   private buildEducationQuery(userId: string, educationRef: string) {
     if (mongoose.Types.ObjectId.isValid(educationRef)) {
       return {
@@ -261,6 +262,7 @@ export default class ResumeRepository {
       .exec();
   }
 
+  // PROJECT 🔍
   private buildProjectQuery(userId: string, projectRef: string) {
     if (mongoose.Types.ObjectId.isValid(projectRef)) {
       return {
@@ -316,7 +318,7 @@ export default class ResumeRepository {
 
     return { userId, certificateId: certificateRef };
   }
-
+  // Resume
   async addCertificate(
     userId: string,
     data: Partial<CertificateRequestBody>
