@@ -159,22 +159,46 @@ export function HeroSection() {
               </motion.p>
 
               {/* CTA Buttons */}
+
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                className="flex flex-col items-center lg:items-start gap-6 w-full"
               >
+                {/* Main CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                  <Link href="/dashboard" className="w-full sm:w-auto">
+                    <Button
+                      size="lg"
+                      className="text-base px-8 py-4 w-full sm:w-auto flex gap-2 items-center justify-center"
+                    >
+                      ✨ Generate Portfolio
+                    </Button>
+                  </Link>
+
+                  <Link href="/dashboard" className="w-full sm:w-auto">
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      className="text-base px-8 py-4 w-full sm:w-auto flex gap-2 items-center justify-center"
+                    >
+                      📄 Create ATS Resume
+                    </Button>
+                  </Link>
+                </div>
+
+                {/* Divider */}
+                <div className="w-full max-w-sm border-t border-white/10" />
+
+                {/* Admin Demo */}
                 <Link href="/dashboard" className="w-full sm:w-auto">
-                  <Button size="lg" glow className="text-base px-8 py-4 w-full sm:w-auto">
-                    <span>✨</span>
-                    Generate Portfolio
-                  </Button>
-                </Link>
-                <Link href="/dashboard" className="w-full sm:w-auto">
-                  <Button variant="secondary" size="lg" className="text-base px-8 py-4 w-full sm:w-auto">
-                    <span>📄</span>
-                    Create ATS Resume
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="text-base px-8 py-4 w-full sm:w-auto flex gap-2 items-center justify-center"
+                  >
+                    👀 See Admin Portfolio & Resume
                   </Button>
                 </Link>
               </motion.div>

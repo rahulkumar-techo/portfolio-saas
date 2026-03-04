@@ -7,10 +7,11 @@ import AISuggestionBanner from '@/components/dashboard/resume/AISuggestionBanner
 import ExperienceSection from '@/components/dashboard/resume/ExperienceSection'
 import SkillsSection from '@/components/dashboard/resume/SkillsSection'
 import ContactSection from '@/components/dashboard/resume/ContactSection'
-import EmptySection from '@/components/dashboard/resume/EmptySection';
-import { useSession } from 'next-auth/react';
-import useContact from '@/hooks/resume/useContact';
-import useResume from '@/hooks/resume/useResume'
+import EducationSection from '@/components/dashboard/resume/EducationSection'
+import ProjectsSection from '@/components/dashboard/resume/ProjectsSection'
+import CertificationsSection from '@/components/dashboard/resume/CertificationsSection'
+import EmptySection from '@/components/dashboard/resume/EmptySection'
+import useContact from '@/hooks/resume/useContact'
 
 export default function ResumePage() {
   const [activeSection, setActiveSection] = useState('experience')
@@ -20,38 +21,13 @@ export default function ResumePage() {
     setParsing(true)
     setTimeout(() => setParsing(false), 2500)
   }
-  const { contact,
-    loading,
-    error,
-    success,
-    fetchContact,
-    updateContact,
-    setContact, } = useContact();
-    console.log("Contact info in ResumePage:", contact, loading, error, success); // Debug log
-    const {loading:resLoading,addExperience}=useResume();
+  const { contact, updateContact, fetchContact } = useContact()
 
-    useEffect(() => {
-      const fetchData = async () => {
-        if(activeSection === 'contact') {
-          await fetchContact()
-        }
-        else if(activeSection === 'experience') {
-          // fetch experience data
-        }
-        else if(activeSection === 'skills') {
-          // fetch skills data
-        }
-
-      }
-
-      fetchData();
-
-    },[activeSection]);
-
-
-    const handleExperience = ()=>{
-      
-    } 
+  useEffect(() => {
+    if (activeSection === 'contact') {
+      fetchContact()
+    }
+  }, [activeSection, fetchContact])
 
   return (
     <div className="space-y-6 max-w-6xl">
@@ -68,9 +44,12 @@ export default function ResumePage() {
 
           {activeSection === 'experience' && <ExperienceSection />}
           {activeSection === 'skills' && <SkillsSection />}
+          {activeSection === 'education' && <EducationSection />}
+          {activeSection === 'projects' && <ProjectsSection />}
+          {activeSection === 'certifications' && <CertificationsSection />}
           {activeSection === 'contact' && <ContactSection contactData={contact} setContactData={updateContact} />}
 
-          {!['experience', 'skills', 'contact'].includes(activeSection) && (
+          {!['experience', 'skills', 'contact', 'education', 'projects', 'certifications'].includes(activeSection) && (
             <EmptySection activeSection={activeSection} />
           )}
         </div>

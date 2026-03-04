@@ -10,7 +10,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        danger:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
@@ -43,10 +46,20 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  loading = false,
+  glow = false,
+  fullWidth = false,
+  icon,
+  children,
+  disabled,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    loading?: boolean
+    glow?: boolean
+    fullWidth?: boolean
+    icon?: React.ReactNode
   }) {
   const Comp = asChild ? Slot.Root : "button"
 
@@ -55,9 +68,21 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        fullWidth && "w-full",
+        glow && "shadow-[0_0_0_1px_rgba(59,130,246,0.22),0_8px_20px_rgba(59,130,246,0.2)]"
+      )}
+      disabled={disabled || loading}
       {...props}
-    />
+    >
+      {loading ? "Loading..." : (
+        <>
+          {icon}
+          {children}
+        </>
+      )}
+    </Comp>
   )
 }
 

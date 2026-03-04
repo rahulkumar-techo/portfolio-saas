@@ -5,14 +5,14 @@
 
 import mongoose, { Schema, models } from "mongoose";
 
-interface IProject {
+export interface IProject {
   userId: mongoose.Types.ObjectId;
   projectId: string; // custom id like 'p1'
   title: string;
   description: string;
   tech: string[];
   link: string;
-  image: string;
+  image?: string;
   stars: number;
 }
 
@@ -53,7 +53,7 @@ const ProjectSchema = new Schema<IProject>(
 
     image: {
       type: String, // can be gradient or real image URL
-      required: true,
+      default: "",
     },
 
     stars: {

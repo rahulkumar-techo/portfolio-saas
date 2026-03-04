@@ -96,7 +96,7 @@ export function TemplatesClient() {
             <p className="text-white/40 text-sm mb-4">
               Can&apos;t find what you&apos;re looking for? Request a custom template.
             </p>
-            <Button variant="outline" size="md">
+            <Button variant="outline" size="sm">
               Request Custom Template
             </Button>
           </motion.div>
@@ -145,7 +145,7 @@ function TemplateCard({ template, hovered }: { template: Template; hovered: bool
             </Button>
           </Link>
           <Link href="/dashboard">
-            <Button size="sm" glow>
+            <Button size="sm">
               Use Template
             </Button>
           </Link>

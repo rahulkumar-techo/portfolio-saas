@@ -5,8 +5,8 @@
 
 'use client'
 
-import { useEffect, useState } from "react"
-import { AxiosError ,isCancel} from "axios"
+import { useState } from "react"
+import { AxiosError } from "axios"
 import api from "@/lib/axios"
 
 export interface ContactInterface {
@@ -35,8 +35,6 @@ const useContact = () => {
 
       const res = await api.get<any>("/user");
 
-      console.log("Fetched contact info FROM HOOK:", res); // Debug log
-
       setContact(res.data.data)
 
     } catch (err) {
@@ -54,7 +52,6 @@ const useContact = () => {
       setLoading(true)
       setError(null)
       setSuccess(null);
-      console.log("Updating contact with data:", updatedData); // Debug log
 
       const res = await api.patch<any>("/user", updatedData);
 
@@ -68,12 +65,6 @@ const useContact = () => {
       setLoading(false)
     }
   }
-
-  /* ---------------- Auto Fetch ---------------- */
-
-  // useEffect(() => {
-  //   fetchContact()
-  // }, [])
 
   return {
     contact,

@@ -4,22 +4,26 @@
  */
 
 import analyticsModel from "@/models/resume/analytics.model";
-import EducationsModel from "@/models/resume/Educations.model";
+import certificatesModel, { ICertificate } from "@/models/resume/certificates.model";
+import educationModel, { IEducation } from "@/models/resume/education.model";
 import experienceModel, { IExperience } from "@/models/resume/experience.model";
-import projectsModel from "@/models/resume/projects.model";
+import projectsModel, { IProject } from "@/models/resume/projects.model";
 import skillsModel from "@/models/resume/skills.model";
 import userModel from "@/models/users/user.model";
-import { ExperienceRequestBody } from "@/types/server-types/resume";
+import {
+  CertificateRequestBody,
+  EducationRequestBody,
+  ExperienceRequestBody,
+  ProjectRequestBody,
+  SkillGroup,
+} from "@/types/server-types/resume";
 import mongoose from "mongoose";
 
 export default class ResumeRepository {
 
-  // 🔹 Section → Model Mapping
+  // 🔹 Single-section model mapping
   private sectionModelMap = {
-    experience: experienceModel,
-    education: EducationsModel,
     skills: skillsModel,
-    projects: projectsModel,
     analytics: analyticsModel,
   };
 
@@ -35,29 +39,24 @@ export default class ResumeRepository {
 
     if (!user) return null;
 
-    const sectionKeys = Object.keys(this.sectionModelMap) as Array<
-      keyof typeof this.sectionModelMap
-    >;
-
-    const sectionResults = await Promise.all(
-      sectionKeys.map(async (key) => {
-        const model = this.sectionModelMap[key];
-
-        let doc = await model.findOne({ userId }).lean().exec();
-
-        // 🔥 Auto-create empty document if not exists
-        if (!doc) {
-          const created = await model.create({ userId });
-          doc = created.toObject();
-        }
-
-        return { [key]: doc };
-      })
-    );
+    const [experience, education, skills, projects, certifications, analytics] =
+      await Promise.all([
+        experienceModel.find({ userId }).sort({ order: 1 }).lean().exec(),
+        educationModel.find({ userId }).sort({ order: 1 }).lean().exec(),
+        this.getSkillsById(userId),
+        projectsModel.find({ userId }).sort({ createdAt: -1 }).lean().exec(),
+        certificatesModel.find({ userId }).sort({ createdAt: -1 }).lean().exec(),
+        this.getOrCreateAnalytics(userId),
+      ]);
 
     return {
       contactInfo: user,
-      ...Object.assign({}, ...sectionResults),
+      experience,
+      education,
+      skills,
+      projects,
+      certifications,
+      analytics,
     };
   }
 
@@ -80,12 +79,36 @@ export default class ResumeRepository {
     // 🔥 EXPERIENCE (multi-doc)
     if (section === "experience") {
       const experiences = await experienceModel
-        .find({ userId: new mongoose.Types.ObjectId(userId) })
+        .find({ userId })
         .sort({ order: 1 })
         .lean()
         .exec();
 
       return experiences;
+    }
+
+    if (section === "education") {
+      return await educationModel
+        .find({ userId })
+        .sort({ order: 1 })
+        .lean()
+        .exec();
+    }
+
+    if (section === "projects") {
+      return await projectsModel
+        .find({ userId })
+        .sort({ createdAt: -1 })
+        .lean()
+        .exec();
+    }
+
+    if (section === "certifications") {
+      return await certificatesModel
+        .find({ userId })
+        .sort({ createdAt: -1 })
+        .lean()
+        .exec();
     }
 
     // 🔥 SKILLS (single-doc)
@@ -98,7 +121,7 @@ export default class ResumeRepository {
       if (!skills) {
         const created = await skillsModel.create({
           userId,
-          skills: [],
+          skillGroups: [],
         });
         skills = created.toObject();
       }
@@ -121,6 +144,16 @@ export default class ResumeRepository {
     }
 
     return doc;
+  }
+
+  private async getOrCreateAnalytics(userId: string) {
+    let analytics = await analyticsModel.findOne({ userId }).lean().exec();
+    if (!analytics) {
+      const created = await analyticsModel.create({ userId });
+      analytics = created.toObject();
+    }
+
+    return analytics;
   }
 
   // add experience CRUD
@@ -175,6 +208,213 @@ export default class ResumeRepository {
       .lean()
       .exec();
   }
+
+  private buildEducationQuery(userId: string, educationRef: string) {
+    if (mongoose.Types.ObjectId.isValid(educationRef)) {
+      return {
+        userId,
+        $or: [{ _id: educationRef }, { educationId: educationRef }],
+      };
+    }
+
+    return { userId, educationId: educationRef };
+  }
+
+  async addEducation(
+    userId: string,
+    data: Partial<EducationRequestBody>
+  ) {
+    const educationId = `edu_${Date.now()}`;
+    const education = await educationModel.create({
+      userId,
+      educationId,
+      ...data,
+    });
+
+    return education.toObject();
+  }
+
+  async updateEducation(
+    userId: string,
+    educationId: string,
+    data: Partial<IEducation>
+  ) {
+    return await educationModel
+      .findOneAndUpdate(this.buildEducationQuery(userId, educationId), { $set: data }, { new: true })
+      .lean()
+      .exec();
+  }
+
+  async deleteEducation(userId: string, educationId: string) {
+    const deleted = await educationModel
+      .findOneAndDelete(this.buildEducationQuery(userId, educationId))
+      .lean()
+      .exec();
+
+    return { success: !!deleted };
+  }
+
+  async getEducationById(userId: string, educationId: string) {
+    return await educationModel
+      .findOne(this.buildEducationQuery(userId, educationId))
+      .lean()
+      .exec();
+  }
+
+  private buildProjectQuery(userId: string, projectRef: string) {
+    if (mongoose.Types.ObjectId.isValid(projectRef)) {
+      return {
+        userId,
+        $or: [{ _id: projectRef }, { projectId: projectRef }],
+      };
+    }
+
+    return { userId, projectId: projectRef };
+  }
+
+  async addResumeProject(userId: string, data: Partial<ProjectRequestBody>) {
+    const projectId = `proj_${Date.now()}`;
+    const project = await projectsModel.create({
+      userId,
+      projectId,
+      ...data,
+    });
+
+    return project.toObject();
+  }
+
+  async updateResumeProject(userId: string, projectId: string, data: Partial<IProject>) {
+    return await projectsModel
+      .findOneAndUpdate(this.buildProjectQuery(userId, projectId), { $set: data }, { new: true })
+      .lean()
+      .exec();
+  }
+
+  async deleteResumeProject(userId: string, projectId: string) {
+    const deleted = await projectsModel
+      .findOneAndDelete(this.buildProjectQuery(userId, projectId))
+      .lean()
+      .exec();
+
+    return { success: !!deleted };
+  }
+
+  async getResumeProjectById(userId: string, projectId: string) {
+    return await projectsModel
+      .findOne(this.buildProjectQuery(userId, projectId))
+      .lean()
+      .exec();
+  }
+
+  private buildCertificateQuery(userId: string, certificateRef: string) {
+    if (mongoose.Types.ObjectId.isValid(certificateRef)) {
+      return {
+        userId,
+        $or: [{ _id: certificateRef }, { certificateId: certificateRef }],
+      };
+    }
+
+    return { userId, certificateId: certificateRef };
+  }
+
+  async addCertificate(
+    userId: string,
+    data: Partial<CertificateRequestBody>
+  ) {
+    const certificateId = `cert_${Date.now()}`;
+    const certificate = await certificatesModel.create({
+      userId,
+      certificateId,
+      ...data,
+    });
+
+    return certificate.toObject();
+  }
+
+  async updateCertificate(
+    userId: string,
+    certificateId: string,
+    data: Partial<ICertificate>
+  ) {
+    return await certificatesModel
+      .findOneAndUpdate(
+        this.buildCertificateQuery(userId, certificateId),
+        { $set: data },
+        { new: true }
+      )
+      .lean()
+      .exec();
+  }
+
+  async deleteCertificate(userId: string, certificateId: string) {
+    const deleted = await certificatesModel
+      .findOneAndDelete(this.buildCertificateQuery(userId, certificateId))
+      .lean()
+      .exec();
+
+    return { success: !!deleted };
+  }
+
+  async getCertificateById(userId: string, certificateId: string) {
+    return await certificatesModel
+      .findOne(this.buildCertificateQuery(userId, certificateId))
+      .lean()
+      .exec();
+  }
+
+  async getSkillsById(userId: string) {
+    let skills = await skillsModel
+      .findOne({ userId })
+      .lean()
+      .exec();
+
+    if (!skills) {
+      const created = await skillsModel.create({ userId, skillGroups: [] });
+      skills = created.toObject();
+    }
+
+    return skills;
+  }
+  async updateSkills(userId: string, skillGroups: SkillGroup[]) {
+    return await skillsModel
+      .findOneAndUpdate(
+        { userId },
+        { $set: { skillGroups } },
+        { new: true, upsert: true }
+      )
+      .lean()
+      .exec();
+  }
+
+  async addSkillGroup(userId: string, group: SkillGroup) {
+    await skillsModel.updateOne(
+      { userId },
+      { $pull: { skillGroups: { category: group.category } } },
+      { upsert: true }
+    );
+
+    return await skillsModel
+      .findOneAndUpdate(
+        { userId },
+        { $push: { skillGroups: group } },
+        { new: true, upsert: true }
+      )
+      .lean()
+      .exec();
+  }
+
+  async deleteSkillGroup(userId: string, category: string) {
+    return await skillsModel
+      .findOneAndUpdate(
+        { userId },
+        { $pull: { skillGroups: { category } } },
+        { new: true }
+      )
+      .lean()
+      .exec();
+  }
+
+
 
 
 }
