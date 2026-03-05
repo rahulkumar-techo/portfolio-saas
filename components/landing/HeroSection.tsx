@@ -192,7 +192,7 @@ export function HeroSection() {
                 <div className="w-full max-w-sm border-t border-white/10" />
 
                 {/* Admin Demo */}
-                <Link href="/dashboard" className="w-full sm:w-auto">
+                <Link href="/admin-profile" className="w-full sm:w-auto">
                   <Button
                     variant="outline"
                     size="lg"

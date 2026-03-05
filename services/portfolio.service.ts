@@ -10,6 +10,10 @@ export class PortfolioService {
 
   private repo = new PortfolioRepository();
 
+  async getPortfolioByUserId(userId: string) {
+    return this.repo.findByUserId(userId);
+  }
+
   async updatePortfolio(userId: string, data: any) {
     const portfolio = await this.repo.findByUserId(userId);
     if (!portfolio) throw new Error("Portfolio not found");
