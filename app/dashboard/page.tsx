@@ -7,11 +7,10 @@ import DeviceSplit from '@/components/dashboard/home/DeviceSplit'
 import SkillScores from '@/components/dashboard/home/SkillScores'
 import TopCountries from '@/components/dashboard/home/TopCountries';
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
 
 export default function DashboardPage() {
   
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   
   console.log("Rendering DashboardPage", session) // Debug log
   return (

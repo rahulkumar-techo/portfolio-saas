@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
 import {
@@ -27,7 +27,7 @@ function RevealOnScroll({ children, delay = 0, className = '' }: {
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 const SECTIONS = ['About', 'Skills', 'Projects', 'Experience', 'Contact']
 
-function PortfolioNav({ username }: { username: string }) {
+function PortfolioNav() {
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState('about')
 
@@ -427,10 +427,10 @@ function ContactSection() {
 }
 
 // ─── Main Portfolio Page ──────────────────────────────────────────────────────
-export function PortfolioClient({ username }: { username: string }) {
+export function PortfolioClient() {
   return (
     <main className="min-h-screen bg-surface-900">
-      <PortfolioNav username={username} />
+      <PortfolioNav />
       <PortfolioHero />
       <AboutSection />
       <SkillsSection />

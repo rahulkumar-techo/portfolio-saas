@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { PortfolioClient } from './PortfolioClient'
 import { MOCK_USER } from '@/lib/data'
 
-export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${MOCK_USER.name} — Portfolio`,
     description: MOCK_USER.bio,
@@ -13,6 +13,6 @@ export async function generateMetadata({ params }: { params: { username: string 
   }
 }
 
-export default function PortfolioPage({ params }: { params: { username: string } }) {
-  return <PortfolioClient username={params.username} />
+export default function PortfolioPage() {
+  return <PortfolioClient />
 }

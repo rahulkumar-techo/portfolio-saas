@@ -10,7 +10,6 @@ import { signOut } from "next-auth/react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const pathname = usePathname()
 
   const activeSection = DASHBOARD_NAV.find(n => {

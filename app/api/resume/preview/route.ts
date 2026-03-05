@@ -8,7 +8,7 @@ import { asyncHandler } from "@/utils/async-handler";
 import { ResponseHandler } from "@/utils/response-handler";
 import BuildResumeService from "@/services/build-resume.service";
 
-export const GET = asyncHandler(async (req: Request) => {
+export const GET = asyncHandler(async () => {
 
   const session = await getServerSession(authOptions);
 
