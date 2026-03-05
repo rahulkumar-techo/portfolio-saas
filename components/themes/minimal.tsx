@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import Image from "next/image";
 
 interface MinimalThemeProps {
   data: any;
@@ -46,9 +47,12 @@ export default function MinimalTheme({
         {/* HERO */}
         <section className="text-center mb-24">
           {hero?.profileImage && (
-            <img
+            <Image
               src={hero.profileImage}
               alt={hero.name}
+              width={112}
+              height={112}
+              unoptimized
               className="w-28 h-28 rounded-full mx-auto mb-6 object-cover"
             />
           )}

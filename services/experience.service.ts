@@ -34,4 +34,6 @@ class ExperienceService {
   // }
 }
 
-export default new ExperienceService();
+const experienceService = new ExperienceService();
+
+export default experienceService;

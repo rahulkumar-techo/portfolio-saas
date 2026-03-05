@@ -57,4 +57,6 @@ class ResumeService {
   }
 }
 
-export default new ResumeService();
+const resumeService = new ResumeService();
+
+export default resumeService;

@@ -186,4 +186,6 @@ class BuildResumeService {
   }
 }
 
-export default new BuildResumeService();
+const buildResumeService = new BuildResumeService();
+
+export default buildResumeService;

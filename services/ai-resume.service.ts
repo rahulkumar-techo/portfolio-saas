@@ -662,7 +662,9 @@ ${JSON.stringify({ experience: resumeData.experience.slice(0, 2), skills: resume
 
 }
 
-export default new AIResumeService();
+const aiResumeService = new AIResumeService();
+
+export default aiResumeService;
 
 
 // ─────────────────────────────────────────────

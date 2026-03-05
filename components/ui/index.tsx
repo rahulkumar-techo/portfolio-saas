@@ -91,7 +91,6 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({ eyebrow, title, highlight, description, centered = true, className }: SectionHeaderProps) {
-  const words = title.split(' ')
   const rendered = highlight
     ? title.replace(highlight, `<span class="text-gradient">${highlight}</span>`)
     : title

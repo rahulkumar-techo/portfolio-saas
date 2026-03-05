@@ -115,14 +115,14 @@ export default function GreenbowPortfolio() {
 
   // Three.js rainbow 3D background
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const canvasElement = canvasRef.current;
+    if (!canvasElement) return;
     const script = document.createElement("script");
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js";
     script.onload = () => {
       const THREE = (window as ThreeRuntimeWindow).THREE;
       if (!THREE) return;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+      const canvas = canvasElement;
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 400);
@@ -252,7 +252,7 @@ export default function GreenbowPortfolio() {
       };
     };
     document.head.appendChild(script);
-    return () => { if (canvasRef.current?._cleanup) canvasRef.current._cleanup(); };
+    return () => { if (canvasElement._cleanup) canvasElement._cleanup(); };
   }, []);
 
   const handleSubmit = () => {

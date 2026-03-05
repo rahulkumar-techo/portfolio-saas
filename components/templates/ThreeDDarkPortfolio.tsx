@@ -84,14 +84,14 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const canvasElement = canvasRef.current;
+    if (!canvasElement) return;
     const script = document.createElement("script");
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js";
     script.onload = () => {
       const THREE = (window as ThreeRuntimeWindow).THREE;
       if (!THREE) return;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+      const canvas = canvasElement;
       const isMobile = window.innerWidth < 768;
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 300);
@@ -150,7 +150,7 @@ export default function Portfolio() {
       canvas._cleanup = () => { cancelAnimationFrame(frameId); window.removeEventListener("mousemove", onMouse); window.removeEventListener("resize", onResize); renderer.dispose(); };
     };
     document.head.appendChild(script);
-    return () => { if (canvasRef.current?._cleanup) canvasRef.current._cleanup(); };
+    return () => { if (canvasElement._cleanup) canvasElement._cleanup(); };
   }, []);
 
   const glass = { background: "rgba(255,255,255,0.08)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 24 };
