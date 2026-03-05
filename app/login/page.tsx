@@ -8,6 +8,7 @@
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -111,9 +112,11 @@ export default function LoginPage() {
           onClick={handleGoogleLogin}
           className="w-full flex items-center justify-center gap-3 border py-2.5 rounded-lg hover:bg-gray-100 transition"
         >
-          <img
+          <Image
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"
+            width={20}
+            height={20}
             className="w-5 h-5"
           />
           <span className="font-medium text-gray-700">

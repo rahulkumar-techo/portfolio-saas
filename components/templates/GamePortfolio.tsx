@@ -138,10 +138,6 @@ const TILE_COLORS: Record<number, string> = {
   5: "#1e3a1e", // dark grass
 };
 
-const TILE_PATTERN: Record<number, string> = {
-  0: "🌿", 2: "💧", 4: "🏖️",
-};
-
 // ─── MINIMAP COLORS ───────────────────────────────────────────────────────────
 const MINI_COLORS: Record<number, string> = {
   0: "#3a6b3a",
@@ -223,7 +219,7 @@ function SkillBar({ skill }: { skill: Skill }) {
 }
 
 // ─── HUD ─────────────────────────────────────────────────────────────────────
-function HUD({ playerPos, nearZone, nearNPC }: { playerPos: { x: number; y: number }; nearZone: Zone | null; nearNPC: NPC | null }) {
+function HUD({ nearZone, nearNPC }: { nearZone: Zone | null; nearNPC: NPC | null }) {
   return (
     <>
       {/* Top-left: player card */}
@@ -766,22 +762,6 @@ export default function GamePortfolio() {
     };
   }, [started, spawnParticle]);
 
-  // Mobile joystick state
-  const [joystick, setJoystick] = useState({ active: false, dx: 0, dy: 0 });
-
-  useEffect(() => {
-    if (!started) return;
-    const g = gameRef.current;
-    if (joystick.active) {
-      g.keys["ArrowLeft"] = joystick.dx < -0.3;
-      g.keys["ArrowRight"] = joystick.dx > 0.3;
-      g.keys["ArrowUp"] = joystick.dy < -0.3;
-      g.keys["ArrowDown"] = joystick.dy > 0.3;
-    } else {
-      g.keys["ArrowLeft"] = g.keys["ArrowRight"] = g.keys["ArrowUp"] = g.keys["ArrowDown"] = false;
-    }
-  }, [joystick, started]);
-
   // START SCREEN
   if (!started) {
     return (
@@ -886,7 +866,7 @@ export default function GamePortfolio() {
         <canvas ref={canvasRef} style={{ display: "block", imageRendering: "pixelated" }} />
 
         {/* HUD */}
-        <HUD playerPos={playerTile} nearZone={nearZone} nearNPC={nearNPC} />
+        <HUD nearZone={nearZone} nearNPC={nearNPC} />
 
         {/* Skill panel (shows in skills zone) */}
         <SkillsPanel visible={showSkills && !dialog} />

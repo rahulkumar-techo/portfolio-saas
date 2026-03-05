@@ -11,7 +11,7 @@ export default function TopCountries() {
       </h3>
 
       <div className="space-y-3">
-        {MOCK_ANALYTICS.topCountries.map((c, i) => (
+        {MOCK_ANALYTICS.topCountries.map((c) => (
           <div key={c.country}>
             <div className="flex justify-between mb-1.5 text-xs">
               <span className="text-white/60">{c.country}</span>

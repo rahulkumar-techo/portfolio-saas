@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const SITE = {
@@ -50,15 +50,6 @@ function Toast({ toasts }: { toasts: ToastItem[] }) {
   );
 }
 
-// ─── RAINBOW TEXT ─────────────────────────────────────────────────────────────
-function RainbowText({ children, style = {} }: { children: ReactNode; style?: CSSProperties }) {
-  return (
-    <span style={{ background: "linear-gradient(135deg, #ff6b6b, #ff9a3c, #fbbf24, #34d399, #22ffcc, #3b82f6, #a78bfa, #ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", ...style }}>
-      {children}
-    </span>
-  );
-}
-
 // ─── PRISM ORBS (decorative background blobs) ─────────────────────────────────
 function PrismOrbs() {
   return (
@@ -86,7 +77,6 @@ export default function GreenbowPortfolio() {
   const [scrollY, setScrollY] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const [activeSection, setActiveSection] = useState("hero");
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sending, setSending] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
