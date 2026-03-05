@@ -159,23 +159,30 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 
 class AIResumeService {
 
-  private ai: GoogleGenAI;
+  private ai: GoogleGenAI | null = null;
 
-  constructor() {
-    this.ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY!,
-    });
+  private getAI(): GoogleGenAI {
+    if (this.ai) return this.ai;
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Please define GEMINI_API_KEY");
+    }
+
+    this.ai = new GoogleGenAI({ apiKey });
+    return this.ai;
   }
 
   // ── Core generator ───────────────────────────────────────────────────────
 
   private async generate(prompt: string, asJSON = false): Promise<string> {
     try {
+      const ai = this.getAI();
       const config = asJSON
         ? { responseMimeType: "application/json" }
         : {};
 
-      const response = await this.ai.models.generateContent({
+      const response = await ai.models.generateContent({
         model: GEMINI_MODEL,
         contents: prompt,
         config,
