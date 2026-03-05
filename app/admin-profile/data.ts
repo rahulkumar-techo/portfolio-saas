@@ -3,7 +3,7 @@ const portfolioData = {
     name: "Rahul Kumar",
     title: "Full Stack Engineer",
     tagline: "Building AI-powered SaaS products & scalable web platforms",
-    avatar: "RK",
+    avatar: "https://res.cloudinary.com/dq6bymvhv/image/upload/v1772681071/personal/admin-pic_l3cjcz.jpg",
     location: "Bihar, India",
     available: true
   },

@@ -4,6 +4,7 @@ import type { About, Hero } from "../types";
 import Card3D from "../shared/Card3D";
 import SectionLabel from "../shared/SectionLabel";
 import { h2, section } from "../styles";
+import Image from "next/image";
 
 interface AboutSectionProps {
   about: About;
@@ -21,7 +22,16 @@ export default function AboutSection({ about, hero }: AboutSectionProps) {
           <Card3D depth={14} style={{ borderRadius: 22, background: "linear-gradient(135deg,rgba(10,12,28,0.95),rgba(20,15,45,0.95))", border: "1px solid rgba(108,99,255,0.22)", boxShadow: "0 30px 80px rgba(108,99,255,0.13),inset 0 1px 0 rgba(255,255,255,0.04)", padding: 28, maxWidth: 340, width: "100%" }}>
             <div style={{ position: "absolute", inset: 0, borderRadius: 22, background: "linear-gradient(135deg,rgba(108,99,255,0.04),transparent,rgba(0,212,255,0.03))", pointerEvents: "none" }} />
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
-              <div style={{ width: 58, height: 58, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Orbitron',monospace", fontWeight: 900, fontSize: 18, color: "#fff", background: "linear-gradient(135deg,#6C63FF,#A855F7)", boxShadow: "0 8px 24px rgba(108,99,255,0.4)", flexShrink: 0 }}>{hero.avatar}</div>
+              <div style={{ width: 58, height: 58, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Orbitron',monospace", fontWeight: 900, fontSize: 18, color: "#fff", background: "linear-gradient(135deg,#6C63FF,#A855F7)", boxShadow: "0 8px 24px rgba(108,99,255,0.4)", flexShrink: 0 }}>
+                 <Image
+                          src={hero?.avatar}
+                          alt="avatar"
+                          width={110}
+                          height={110}
+                          style={{ objectFit: "cover" }}
+                          className=" rounded-sm"
+                        />
+              </div>
               <div>
                 <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, color: "#fff", fontSize: 15 }}>{hero.name}</div>
                 <div style={{ fontFamily: "'JetBrains Mono',monospace", color: "#A78BFA", fontSize: 11, marginTop: 2 }}>{about.role}</div>
@@ -61,3 +71,4 @@ export default function AboutSection({ about, hero }: AboutSectionProps) {
     </section>
   );
 }
+// .avatar

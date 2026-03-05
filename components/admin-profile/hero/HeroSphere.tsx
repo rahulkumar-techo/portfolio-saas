@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface HeroSphereProps {
   tiltX: number;
   tiltY: number;
@@ -27,7 +29,14 @@ export default function HeroSphere({ tiltX, tiltY, avatar = "AM" }: HeroSpherePr
       </div>
 
       <div style={{ position: "relative", zIndex: 10, width: 110, height: 110, borderRadius: "50%", background: "linear-gradient(135deg, #1a0533, #0d0d2b, #001a3d)", border: "2px solid rgba(108,99,255,0.6)", boxShadow: "0 0 50px rgba(108,99,255,0.4), inset 0 0 30px rgba(108,99,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Orbitron',monospace", fontWeight: 900, fontSize: 22, color: "#fff", transform: `rotateX(${tiltX * 0.3}deg) rotateY(${tiltY * 0.3}deg)`, transition: "transform 0.1s ease" }}>
-        {avatar}
+         <Image
+          src={avatar}
+          alt="avatar"
+          width={110}
+          height={110}
+          style={{ objectFit: "cover" }}
+          className=" rounded-full"
+        />
         <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "linear-gradient(135deg, rgba(108,99,255,0.2), transparent, rgba(0,212,255,0.1))", animation: "holo 4s ease-in-out infinite alternate" }} />
       </div>
 

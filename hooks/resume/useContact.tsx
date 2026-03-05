@@ -55,7 +55,7 @@ const useContact = () => {
 
       const res = await api.patch<any>("/user", updatedData);
 
-      setContact(res.data.data.ContactInterface)
+      setContact(res.data.data)
       setSuccess("Contact updated successfully")
 
     } catch (err) {
